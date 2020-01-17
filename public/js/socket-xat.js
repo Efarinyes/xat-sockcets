@@ -18,7 +18,9 @@ socket.on('connect', function() {
     console.log('Conectat al servidor');
 
     socket.emit('entrarXat', usuari, function(resp) {
-        console.log('Usuaris conectats', resp);
+        // console.log('Usuaris conectats', resp);
+
+        renderitzarUsuaris(resp);
     });
 });
 
@@ -35,13 +37,18 @@ socket.on('disconnect', function() {
 
 // Escoltar al servidor
 socket.on('crearMissatge', function(missatge) {
-    console.log(missatge);
+    // console.log(missatge);
+    renderitzarMissatges(missatge, false);
+    scrollBottom();
 });
+
 
 // Escoltem moviments de persones
 // ( control d'entrada i sortida del xat )
 socket.on('llistaPersones', function(persones) {
-    console.log(persones);
+    // console.log(persones);
+
+    renderitzarUsuaris(persones);
 });
 
 // Mètode per enviar missatges privats

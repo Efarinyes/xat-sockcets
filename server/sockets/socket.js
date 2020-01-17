@@ -23,21 +23,29 @@ io.on('connection', (client) => {
 
         usuaris.afegirPersona(client.id, data.nom, data.sala);
         client.broadcast.to(data.sala).emit('llistaPersones', usuaris.getParticipantsSala(data.sala));
+
+        client.broadcast.to(data.sala).emit('crearMissatge', crearMissatge('Admin', `${data.nom} ha entrat al xat`));
+
         callback(usuaris.getParticipantsSala(data.sala));
 
     });
 
-    client.on('crearMissatge', (data) => {
+    client.on('crearMissatge', (data, callback) => {
 
         let persona = usuaris.getPersona(client.id);
 
         let missatge = crearMissatge(persona.nom, data.missatge);
         client.broadcast.to(persona.sala).emit('crearMissatge', missatge);
+
+
+        callback(missatge);
     });
 
     client.on('disconnect', () => {
         let personaBorrada = usuaris.borrarPersona(client.id);
         client.broadcast.to(personaBorrada.sala).emit('crearMissatge', crearMissatge('Admin', `${personaBorrada.nom} ha sortit del xat`));
+
+        // client.broadcast.to(personaBorrada.sala).emit('crearMissatge', crearMissatge('Administrador', `${ personaBorrada.nom } ha sortit del Xat`));
         client.broadcast.to(personaBorrada.sala).emit('llistaPersones', usuaris.getParticipantsSala(personaBorrada.sala));
 
     });
